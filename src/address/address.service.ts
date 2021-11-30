@@ -11,11 +11,11 @@ export class AddressService {
     private addressRepository: Repository<Address>,
   ) {}
 
-  findAll(): Promise<Address[]> {
+  getAll(): Promise<Address[]> {
     return this.addressRepository.find();
   }
 
-  findOne(id: string): Promise<Address> {
+  getById(id: number): Promise<Address> {
     return this.addressRepository.findOne(id);
   }
 
@@ -32,7 +32,7 @@ export class AddressService {
     return this.addressRepository.update({ user: address.user }, address);
   }
 
-  async remove(id: string): Promise<void> {
+  async remove(id: number): Promise<void> {
     await this.addressRepository.delete(id);
   }
 }

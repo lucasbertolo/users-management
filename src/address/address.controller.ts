@@ -6,7 +6,9 @@ import {
   Param,
   Post,
   Put,
+  UseGuards,
 } from '@nestjs/common';
+import JwtAuthenticationGuard from '../auth/jwt-auth.guard';
 import { Address } from '../entities/address.entity';
 import { AddressService } from './address.service';
 
@@ -15,16 +17,19 @@ export class AddressController {
   constructor(private readonly addressService: AddressService) {}
 
   @Get()
-  findAll() {
-    return this.addressService.findAll();
+  @UseGuards(JwtAuthenticationGuard)
+  getAll() {
+    return this.addressService.getAll();
   }
 
   @Get('/:id')
-  findOne(@Param('id') id: string) {
-    return this.addressService.findOne(id);
+  @UseGuards(JwtAuthenticationGuard)
+  getById(@Param('id') id: number) {
+    return this.addressService.getById(id);
   }
 
   @Post()
+  @UseGuards(JwtAuthenticationGuard)
   add(@Body() address: Address) {
     const mockUser = {
       firstName: 'Lucas',
@@ -40,12 +45,14 @@ export class AddressController {
   }
 
   @Put()
+  @UseGuards(JwtAuthenticationGuard)
   edit(@Body() address: Address) {
     return this.addressService.update(address);
   }
 
   @Delete('/:id')
-  remove(@Param('id') id: string) {
+  @UseGuards(JwtAuthenticationGuard)
+  remove(@Param('id') id: number) {
     return this.addressService.remove(id);
   }
 }
