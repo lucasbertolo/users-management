@@ -20,12 +20,18 @@ export class UsersService {
     return user;
   }
 
-  findAll(): Promise<User[]> {
+  getAll(): Promise<User[]> {
     return this.usersRepository.find();
   }
 
-  findOne(id: string): Promise<User> {
-    return this.usersRepository.findOne(id);
+  getById(id: number): Promise<User> {
+    const user = this.usersRepository.findOne(id);
+
+    if (!user) {
+      throw new HttpException('User non existent', HttpStatus.NOT_FOUND);
+    }
+
+    return user;
   }
 
   async add(user: User) {
@@ -38,7 +44,7 @@ export class UsersService {
     return this.usersRepository.update({ id: user.id }, user);
   }
 
-  async remove(id: string): Promise<void> {
+  async remove(id: number): Promise<void> {
     await this.usersRepository.delete(id);
   }
 }
