@@ -6,7 +6,6 @@ import { Address } from '../entities/address.entity';
 
 @Module({
   imports: [TypeOrmModule.forFeature([Address])],
-  exports: [TypeOrmModule],
   providers: [AddressService],
   controllers: [AddressController],
 })

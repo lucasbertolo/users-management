@@ -1,12 +1,8 @@
 import { Module } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { AddressController } from 'src/address/address.controller';
 import { AddressModule } from 'src/address/address.module';
-import { AddressService } from 'src/address/address.service';
-import { UsersController } from 'src/users/users.controller';
 import { UsersModule } from 'src/users/users.module';
-import { UsersService } from 'src/users/users.service';
 import { Address } from '../entities/address.entity';
 import { User } from '../entities/users.entity';
 import { AppController } from './app.controller';
@@ -32,7 +28,7 @@ console.log('process.env.MYSQL_PASSWORD', process.env.MYSQL_PASSWORD);
       synchronize: true,
     }),
   ],
-  controllers: [AppController, UsersController, AddressController],
-  providers: [AppService, UsersService, AddressService],
+  controllers: [AppController],
+  providers: [AppService],
 })
 export class AppModule {}

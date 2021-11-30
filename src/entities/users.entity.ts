@@ -12,8 +12,8 @@ export class User {
   @Column()
   lastName: string;
 
-  @Column({ default: true })
-  isActive: boolean;
+  @Column({ type: 'bigint' })
+  birthDate: number;
 
   @OneToMany(() => Address, (address) => address.user)
   address: Address[];
