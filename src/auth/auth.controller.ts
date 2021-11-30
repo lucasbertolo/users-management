@@ -1,17 +1,18 @@
 import {
   Body,
   Controller,
-  HttpStatus,
+  Get,
   Post,
   Req,
   Res,
   UseGuards,
 } from '@nestjs/common';
+import { Response } from 'express';
 import { User } from '../entities/users.entity';
 import RequestWithUser from './auth.interfaces';
 import { AuthService } from './auth.service';
+import JwtAuthenticationGuard from './jwt-auth.guard';
 import { LocalAuthGuard } from './localAuth.guard';
-import { Response } from 'express';
 
 @Controller('auth')
 export class AuthController {
@@ -32,5 +33,21 @@ export class AuthController {
   @Post('register')
   async register(@Body() user: User) {
     return this.authService.register(user);
+  }
+
+  @UseGuards(JwtAuthenticationGuard)
+  @Post('logout')
+  async logout(@Req() request: RequestWithUser, @Res() response: Response) {
+    response.setHeader('Set-Cookie', this.authService.clearToken());
+
+    return response.sendStatus(200);
+  }
+
+  @UseGuards(JwtAuthenticationGuard)
+  @Get()
+  authenticate(@Req() request: RequestWithUser) {
+    const user = request.user;
+
+    return user;
   }
 }
