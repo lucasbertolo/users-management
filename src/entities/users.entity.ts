@@ -1,6 +1,7 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { Entity, Column, PrimaryGeneratedColumn, OneToMany } from 'typeorm';
 import { Address } from './address.entity';
+import { Exclude } from 'class-transformer';
 
 @Entity()
 export class User {
@@ -12,8 +13,16 @@ export class User {
   firstName: string;
 
   @ApiProperty()
+  @Column({ unique: true })
+  email: string;
+
+  @ApiProperty()
   @Column()
   lastName: string;
+
+  @Column()
+  @Exclude()
+  password: string;
 
   @ApiProperty()
   @Column({ type: 'bigint' })
@@ -21,6 +30,7 @@ export class User {
 
   @OneToMany(() => Address, (address) => address.user, {
     cascade: true,
+    eager: true,
   })
   address: Address[];
 }

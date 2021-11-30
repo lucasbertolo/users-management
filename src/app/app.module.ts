@@ -8,7 +8,6 @@ import { User } from '../entities/users.entity';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
 
-console.log('process.env.MYSQL_PASSWORD', process.env.MYSQL_PASSWORD);
 @Module({
   imports: [
     ConfigModule.forRoot({

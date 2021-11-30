@@ -24,9 +24,19 @@ export class AddressController {
     return this.addressService.findOne(id);
   }
 
-  @Post('/:id')
-  add(@Param('id') userId: string, @Body() address: Address) {
-    return this.addressService.add(userId, address);
+  @Post()
+  add(@Body() address: Address) {
+    const mockUser = {
+      firstName: 'Lucas',
+      lastName: 'Bertolo',
+      email: 'lucas.bertolo@ad.c',
+      birthDate: new Date().getTime(),
+      id: 1,
+      password: 'audshhusda',
+      address: [],
+    };
+
+    return this.addressService.add(address, mockUser);
   }
 
   @Put()

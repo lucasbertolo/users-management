@@ -9,8 +9,6 @@ export class AddressService {
   constructor(
     @InjectRepository(Address)
     private addressRepository: Repository<Address>,
-    @InjectRepository(User)
-    private userRepository: Repository<User>,
   ) {}
 
   findAll(): Promise<Address[]> {
@@ -21,8 +19,11 @@ export class AddressService {
     return this.addressRepository.findOne(id);
   }
 
-  async add(userId: string, address: Address) {
-    const inserted = await this.addressRepository.insert(address);
+  async add(address: Address, user: User) {
+    const inserted = await this.addressRepository.insert({
+      ...address,
+      user,
+    });
 
     return inserted;
   }
