@@ -24,9 +24,9 @@ export class AddressController {
     return this.addressService.findOne(id);
   }
 
-  @Post()
-  add(@Body() address: Address) {
-    return this.addressService.add(address);
+  @Post('/:id')
+  add(@Param('id') userId: string, @Body() address: Address) {
+    return this.addressService.add(userId, address);
   }
 
   @Put()

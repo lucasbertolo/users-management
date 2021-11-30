@@ -12,8 +12,7 @@ console.log('process.env.MYSQL_PASSWORD', process.env.MYSQL_PASSWORD);
 @Module({
   imports: [
     ConfigModule.forRoot({
-      envFilePath: `${process.env.NODE_ENV}.env`,
-      isGlobal: true,
+      envFilePath: '.env',
     }),
     UsersModule,
     AddressModule,
