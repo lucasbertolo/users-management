@@ -11,12 +11,20 @@ export class AddressService {
     private addressRepository: Repository<Address>,
   ) {}
 
-  getAll(): Promise<Address[]> {
-    return this.addressRepository.find();
+  async getAll(user: User): Promise<Address[]> {
+    return this.addressRepository.find({ user });
   }
 
-  getById(id: number): Promise<Address> {
-    return this.addressRepository.findOne(id);
+  async getById(id: number, user: User): Promise<Address> {
+    return this.addressRepository.findOne({ id, user });
+  }
+
+  async getByFilter(
+    params: { [key: string]: string },
+    user: User,
+  ): Promise<Address> {
+    console.log('params', params);
+    return this.addressRepository.findOne({ ...params, user });
   }
 
   async add(address: Address, user: User) {

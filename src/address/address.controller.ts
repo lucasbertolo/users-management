@@ -6,6 +6,7 @@ import {
   Param,
   Post,
   Put,
+  Query,
   Req,
   UseGuards,
 } from '@nestjs/common';
@@ -20,14 +21,14 @@ export class AddressController {
 
   @Get()
   @UseGuards(JwtAuthenticationGuard)
-  getAll() {
-    return this.addressService.getAll();
+  getAll(@Req() request: RequestWithUser) {
+    return this.addressService.getAll(request.user);
   }
 
   @Get('/:id')
   @UseGuards(JwtAuthenticationGuard)
-  getById(@Param('id') id: number) {
-    return this.addressService.getById(id);
+  getById(@Param('id') id: number, @Req() request: RequestWithUser) {
+    return this.addressService.getById(id, request.user);
   }
 
   @Post()
@@ -40,6 +41,27 @@ export class AddressController {
   @UseGuards(JwtAuthenticationGuard)
   edit(@Body() address: Address, @Req() request: RequestWithUser) {
     return this.addressService.update(address, request.user);
+  }
+
+  @UseGuards(JwtAuthenticationGuard)
+  @Get('/findByFilter/q?')
+  getByFilter(
+    @Query('country') country: string,
+    @Query('city') city: string,
+    @Query('district') district: string,
+    @Query('street') street: string,
+    @Req() request: RequestWithUser,
+  ) {
+    const data = { country, city, district, street };
+
+    const withoutNull = Object.entries(data).filter(([, value]) => value);
+
+    if (withoutNull.length === 0) return;
+
+    return this.addressService.getByFilter(
+      Object.fromEntries(withoutNull),
+      request.user,
+    );
   }
 
   @Delete('/:id')
