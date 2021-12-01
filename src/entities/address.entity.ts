@@ -18,6 +18,7 @@ export class Address {
   @Column()
   streetNumber: number;
 
+  @ApiProperty()
   @Column()
   district: string;
 
