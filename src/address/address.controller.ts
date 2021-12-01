@@ -6,8 +6,10 @@ import {
   Param,
   Post,
   Put,
+  Req,
   UseGuards,
 } from '@nestjs/common';
+import RequestWithUser from 'src/auth/auth.interfaces';
 import JwtAuthenticationGuard from '../auth/jwt-auth.guard';
 import { Address } from '../entities/address.entity';
 import { AddressService } from './address.service';
@@ -30,24 +32,14 @@ export class AddressController {
 
   @Post()
   @UseGuards(JwtAuthenticationGuard)
-  add(@Body() address: Address) {
-    const mockUser = {
-      firstName: 'Lucas',
-      lastName: 'Bertolo',
-      email: 'lucas.bertolo@ad.c',
-      birthDate: new Date().getTime(),
-      id: 1,
-      password: 'audshhusda',
-      address: [],
-    };
-
-    return this.addressService.add(address, mockUser);
+  add(@Body() address: Address, @Req() request: RequestWithUser) {
+    return this.addressService.add(address, request.user);
   }
 
   @Put()
   @UseGuards(JwtAuthenticationGuard)
-  edit(@Body() address: Address) {
-    return this.addressService.update(address);
+  edit(@Body() address: Address, @Req() request: RequestWithUser) {
+    return this.addressService.update(address, request.user);
   }
 
   @Delete('/:id')

@@ -39,28 +39,24 @@ export class AuthService {
   }
 
   async login(email: string, hashedPassword: string) {
+    let user: User | undefined;
+
     try {
-      const user = await this.userService.getByEmail(email);
-
-      const hasAccount = await bcrypt.compare(
-        hashedPassword,
-        user?.password || '',
-      );
-
-      if (!hasAccount) {
-        throw new HttpException(
-          'Error trying to login',
-          HttpStatus.BAD_REQUEST,
-        );
-      }
-
-      return user;
+      user = await this.userService.getByEmail(email);
     } catch (error) {
-      throw new HttpException(
-        'Something has gone wrong, try again later',
-        HttpStatus.INTERNAL_SERVER_ERROR,
-      );
+      throw new HttpException('Error trying to login', HttpStatus.BAD_REQUEST);
     }
+
+    const hasAccount = await bcrypt.compare(
+      hashedPassword,
+      user?.password || '',
+    );
+
+    if (!hasAccount) {
+      throw new HttpException('Error trying to login', HttpStatus.BAD_REQUEST);
+    }
+
+    return user;
   }
 
   getToken(userId: number) {

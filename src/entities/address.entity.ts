@@ -7,7 +7,7 @@ export class Address {
   @PrimaryGeneratedColumn()
   id: number;
 
-  @ManyToOne(() => User, (user) => user.address)
+  @ManyToOne(() => User, (user) => user.address, { onDelete: 'CASCADE' })
   user: User;
 
   @ApiProperty()

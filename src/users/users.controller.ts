@@ -5,7 +5,6 @@ import {
   Delete,
   Get,
   Param,
-  Post,
   Put,
   UseGuards,
   UseInterceptors,
@@ -37,15 +36,15 @@ export class UsersController {
     return this.userService.getByEmail(email);
   }
 
-  @Post()
-  @UseGuards(JwtAuthenticationGuard)
-  add(@Body() user: User) {
+  add(user: User) {
     return this.userService.add(user);
   }
 
   @Put()
   @UseGuards(JwtAuthenticationGuard)
   edit(@Body() user: User) {
+    delete user.email;
+
     return this.userService.update(user);
   }
 

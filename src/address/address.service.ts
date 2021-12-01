@@ -28,8 +28,8 @@ export class AddressService {
     return inserted;
   }
 
-  async update(address: Address) {
-    return this.addressRepository.update({ user: address.user }, address);
+  async update(address: Address, user: User) {
+    return this.addressRepository.update({ user, id: address.id }, address);
   }
 
   async remove(id: number): Promise<void> {
