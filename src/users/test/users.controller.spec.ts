@@ -7,10 +7,9 @@ import { ConfigService } from '@nestjs/config';
 import { JwtService } from '@nestjs/jwt';
 import { Test } from '@nestjs/testing';
 import { getRepositoryToken } from '@nestjs/typeorm';
-import * as bcrypt from 'bcrypt';
 import { plainToClass } from 'class-transformer';
-import JwtAuthenticationGuard from '../../auth/jwt-auth.guard';
 import * as request from 'supertest';
+import JwtAuthenticationGuard from '../../auth/jwt-auth.guard';
 import { User } from '../../entities/users.entity';
 import { UsersService } from '../../users/users.service';
 import { mockedConfigService, mockedJwtService } from '../../utils/mocks';
@@ -30,13 +29,7 @@ const mockedUser: User = {
 };
 
 describe('Users Controller', () => {
-  let bcryptCompare: jest.Mock;
   let findOne: jest.Mock;
-
-  beforeEach(async () => {
-    bcryptCompare = jest.fn().mockReturnValue(true);
-    (bcrypt.compare as jest.Mock) = bcryptCompare;
-  });
 
   beforeEach(async () => {
     user = { ...mockedUser };

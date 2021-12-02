@@ -22,8 +22,8 @@ export class AddressService {
   async getByFilter(
     params: { [key: string]: string },
     user: User,
-  ): Promise<Address> {
-    return this.addressRepository.findOne({ ...params, user });
+  ): Promise<Address[]> {
+    return this.addressRepository.find({ ...params, user });
   }
 
   async add(address: Address, user: User) {

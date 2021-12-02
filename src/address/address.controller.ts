@@ -3,6 +3,8 @@ import {
   Controller,
   Delete,
   Get,
+  HttpException,
+  HttpStatus,
   Param,
   Post,
   Put,
@@ -56,7 +58,12 @@ export class AddressController {
 
     const withoutNull = Object.entries(data).filter(([, value]) => value);
 
-    if (withoutNull.length === 0) return;
+    if (withoutNull.length === 0) {
+      throw new HttpException(
+        'Parameters do not match',
+        HttpStatus.BAD_REQUEST,
+      );
+    }
 
     return this.addressService.getByFilter(
       Object.fromEntries(withoutNull),
