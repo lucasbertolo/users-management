@@ -12,6 +12,7 @@ import {
   Req,
   UseGuards,
 } from '@nestjs/common';
+import { ApiQuery } from '@nestjs/swagger';
 import RequestWithUser from '../auth/auth.interfaces';
 import JwtAuthenticationGuard from '../auth/jwt-auth.guard';
 import { Address } from '../entities/address.entity';
@@ -47,12 +48,16 @@ export class AddressController {
 
   @UseGuards(JwtAuthenticationGuard)
   @Get('/findByFilter/q?')
+  @ApiQuery({ type: 'string', name: 'country', required: false })
+  @ApiQuery({ type: 'string', name: 'city', required: false })
+  @ApiQuery({ type: 'string', name: 'district', required: false })
+  @ApiQuery({ type: 'string', name: 'street', required: false })
   getByFilter(
-    @Query('country') country: string,
-    @Query('city') city: string,
-    @Query('district') district: string,
-    @Query('street') street: string,
     @Req() request: RequestWithUser,
+    @Query('country') country?: string,
+    @Query('city') city?: string,
+    @Query('district') district?: string,
+    @Query('street') street?: string,
   ) {
     const data = { country, city, district, street };
 

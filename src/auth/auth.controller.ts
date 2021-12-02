@@ -8,11 +8,15 @@ import {
   UseGuards,
   UseInterceptors,
 } from '@nestjs/common';
+import { ApiBody } from '@nestjs/swagger';
 import { User } from '../entities/users.entity';
 import RequestWithUser from './auth.interfaces';
 import { AuthService } from './auth.service';
+import { AuthLoginDto } from './dto/login.dto';
+import { AuthRegisterDto } from './dto/register.dto';
 import JwtAuthenticationGuard from './jwt-auth.guard';
 import { LocalAuthGuard } from './localAuth.guard';
+
 @Controller('auth')
 @UseInterceptors(ClassSerializerInterceptor)
 export class AuthController {
@@ -20,6 +24,7 @@ export class AuthController {
 
   @UseGuards(LocalAuthGuard)
   @Post('login')
+  @ApiBody({ type: AuthLoginDto })
   async login(@Req() request: RequestWithUser) {
     const { user } = request;
 
@@ -31,6 +36,7 @@ export class AuthController {
   }
 
   @Post('register')
+  @ApiBody({ type: AuthRegisterDto })
   async register(@Body() user: User) {
     return this.authService.register(user);
   }
