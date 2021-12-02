@@ -20,12 +20,12 @@ export class UsersService {
     return user;
   }
 
-  getAll(): Promise<User[]> {
+  async getAll(): Promise<User[]> {
     return this.usersRepository.find();
   }
 
-  getById(id: number): Promise<User> {
-    const user = this.usersRepository.findOne(id);
+  async getById(id: number): Promise<User> {
+    const user = await this.usersRepository.findOne(id);
 
     if (!user) {
       throw new HttpException('User non existent', HttpStatus.NOT_FOUND);
