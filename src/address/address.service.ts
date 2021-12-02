@@ -23,7 +23,6 @@ export class AddressService {
     params: { [key: string]: string },
     user: User,
   ): Promise<Address> {
-    console.log('params', params);
     return this.addressRepository.findOne({ ...params, user });
   }
 

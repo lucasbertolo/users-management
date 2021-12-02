@@ -2,8 +2,18 @@ import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { JwtService } from '@nestjs/jwt';
 import * as bcrypt from 'bcrypt';
+import * as yup from 'yup';
 import { User } from '../entities/users.entity';
 import { UsersService } from '../users/users.service';
+import { getValidationError } from '../utils/validation';
+
+const userValidationSchema = yup.object().shape({
+  password: yup.string().min(8).required(),
+  email: yup.string().required(),
+  birthDate: yup.number().required(),
+  firstName: yup.string().required(),
+  lastName: yup.string().required(),
+});
 
 @Injectable()
 export class AuthService {
@@ -15,6 +25,8 @@ export class AuthService {
 
   async register(user: User) {
     try {
+      await userValidationSchema.validate(user, { abortEarly: false });
+
       const hashedPassword = await bcrypt.hash(user.password, 10);
 
       await this.userService.add({
@@ -24,6 +36,13 @@ export class AuthService {
 
       return true;
     } catch (error) {
+      if (error instanceof yup.ValidationError) {
+        throw new HttpException(
+          JSON.stringify(getValidationError(error)),
+          HttpStatus.BAD_REQUEST,
+        );
+      }
+
       if (error?.driverError?.code === 'ER_DUP_ENTRY') {
         throw new HttpException(
           'User already existent',
