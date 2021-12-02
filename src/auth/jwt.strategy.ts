@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { PassportStrategy } from '@nestjs/passport';
 import { Request } from 'express';
@@ -23,6 +23,12 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
   }
 
   async validate(payload: Cookie) {
-    return this.userService.getById(payload.userId);
+    try {
+      const user = await this.userService.getById(payload.userId);
+
+      return user;
+    } catch (error) {
+      throw new HttpException('User needs to log in', HttpStatus.UNAUTHORIZED);
+    }
   }
 }
