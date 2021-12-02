@@ -7,7 +7,7 @@ import { LocalStrategy } from './passport.strategy';
 import { JwtModule } from '@nestjs/jwt';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { JwtStrategy } from './jwt.strategy';
-import { UsersService } from 'src/users/users.service';
+import { UsersService } from '../users/users.service';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { User } from '../entities/users.entity';
 

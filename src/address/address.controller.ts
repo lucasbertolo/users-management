@@ -12,7 +12,7 @@ import {
   Req,
   UseGuards,
 } from '@nestjs/common';
-import RequestWithUser from 'src/auth/auth.interfaces';
+import RequestWithUser from '../auth/auth.interfaces';
 import JwtAuthenticationGuard from '../auth/jwt-auth.guard';
 import { Address } from '../entities/address.entity';
 import { AddressService } from './address.service';
