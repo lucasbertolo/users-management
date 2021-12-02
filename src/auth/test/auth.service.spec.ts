@@ -2,33 +2,32 @@ import { ConfigService } from '@nestjs/config';
 import { JwtService } from '@nestjs/jwt';
 import { Test } from '@nestjs/testing';
 import { getRepositoryToken } from '@nestjs/typeorm';
+import * as bcrypt from 'bcrypt';
 import { User } from '../../entities/users.entity';
 import { UsersService } from '../../users/users.service';
 import { mockedConfigService, mockedJwtService } from '../../utils/mocks';
 import { AuthService } from '../auth.service';
-import * as bcrypt from 'bcrypt';
 
-const testUser1 = {
-  birthDate: new Date().getTime(),
+const mockedUser: User = {
+  id: 1,
   email: 'test@test.com',
-  firstName: 'firstName',
-  lastName: 'lastName',
-  password: '123132321',
-};
-
-const testUser2 = {
+  firstName: 'test',
+  lastName: 'test',
+  password: 'password',
+  address: [],
   birthDate: new Date().getTime(),
-  email: 'test2@test.com',
-  firstName: 'firstName',
-  lastName: 'lastName',
-  password: 'aaaaa',
 };
 
-const testUsersList = [testUser1, testUser2];
-
-describe('The authService', () => {
+describe('Auth Service', () => {
   let authService: AuthService;
   let findOne: jest.Mock;
+
+  let bcryptCompare: jest.Mock;
+
+  beforeEach(async () => {
+    bcryptCompare = jest.fn().mockReturnValue(true);
+    (bcrypt.compare as jest.Mock) = bcryptCompare;
+  });
 
   beforeEach(async () => {
     findOne = jest.fn();
@@ -48,12 +47,8 @@ describe('The authService', () => {
         {
           provide: getRepositoryToken(User),
           useValue: {
-            find: jest.fn().mockResolvedValue(testUsersList),
             findOne,
-            insert: jest.fn().mockReturnValue(testUser1),
-            save: jest.fn(),
-            update: jest.fn().mockResolvedValue(true),
-            delete: jest.fn().mockResolvedValue(true),
+            insert: jest.fn().mockReturnValue(mockedUser),
           },
         },
       ],
@@ -78,43 +73,59 @@ describe('The authService', () => {
 
   describe('register', () => {
     it('should register a new user', async () => {
-      expect(await authService.register(testUser1 as User)).toEqual(true);
+      expect(await authService.register(mockedUser)).toEqual(true);
     });
 
     it('should throw error for user with invalid data', async () => {
-      const failedUser = { ...testUser1, password: null };
+      const failedUser = { ...mockedUser, password: null };
 
       expect(authService.register(failedUser as User)).rejects.toThrowError();
     });
   });
 
   describe('login', () => {
-    beforeEach(async () => {
-      const hashedPassword = await bcrypt.hash(testUser1.password, 10);
+    describe('password is not valid', () => {
+      beforeEach(() => {
+        bcryptCompare.mockReturnValue(false);
+      });
 
-      const user = { ...testUser1, password: hashedPassword };
-
-      findOne.mockReturnValue(Promise.resolve(user));
-    });
-
-    it('should return the user', async () => {
-      const fetchedUser = await authService.login(
-        testUser1.email,
-        testUser1.password,
-      );
-
-      const mockUser = { ...testUser1, password: undefined };
-
-      delete fetchedUser.password;
-
-      expect(fetchedUser).toEqual(mockUser);
-    });
-
-    describe('and the user is not matched', () => {
       it('should throw an error', async () => {
         await expect(
-          authService.login(testUser1.email, testUser1.password + 'aaaa'),
+          authService.login('user@email.com', 'strongPassword'),
         ).rejects.toThrow();
+      });
+    });
+
+    describe('password is valid', () => {
+      beforeEach(() => {
+        bcryptCompare.mockReturnValue(true);
+      });
+
+      describe('user exists', () => {
+        beforeEach(() => {
+          findOne.mockResolvedValue(mockedUser);
+        });
+
+        it('should return the user data', async () => {
+          const user = await authService.login(
+            'user@email.com',
+            'strongPassword',
+          );
+
+          expect(user).toBe(mockedUser);
+        });
+      });
+
+      describe('and the user does not exist', () => {
+        beforeEach(() => {
+          findOne.mockResolvedValue(undefined);
+        });
+
+        it('should throw an error', async () => {
+          await expect(
+            authService.login('user@email.com', 'strongPassword'),
+          ).rejects.toThrow();
+        });
       });
     });
   });
