@@ -4,11 +4,13 @@ Users Management - Api that allows you to register an user with multiple address
 
 ## Installation
 
-```bash
-** It is necessary to have local connection to MySql. You can get the latest version here(https://www.mysql.com/downloads/).
+** It is necessary to have local connection to MySql. 
+
+- You can get the latest version [here](https://www.mysql.com/downloads/).
 
 Also, you need to setup your environment to run in your local machine, copy the env.sample file into a .env file and replace the MySql fields to your config.
 
+```bash
 $ npm install
 ```
 
